@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -30,11 +30,11 @@ export class LoginComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
   
-  // Signals for the component state
-  username = signal('');
-  password = signal('');
-  loading = signal(false);
-  error = signal<string | null>(null);
+  // Model properties instead of signals
+  username = '';
+  password = '';
+  loading = false;
+  error: string | null = null;
   
   // Property to toggle password visibility
   hidePassword = true;
@@ -46,35 +46,25 @@ export class LoginComponent {
     }
   }
   
-  // Update username signal
-  updateUsername(event: Event): void {
-    this.username.set((event.target as HTMLInputElement).value);
-  }
-  
-  // Update password signal
-  updatePassword(event: Event): void {
-    this.password.set((event.target as HTMLInputElement).value);
-  }
-  
   // Perform login
   login(): void {
-    if (!this.username() || !this.password()) {
-      this.error.set('Username and password are required');
+    if (!this.username || !this.password) {
+      this.error = 'Username and password are required';
       return;
     }
     
-    this.loading.set(true);
-    this.error.set(null);
+    this.loading = true;
+    this.error = null;
     
-    this.authService.login(this.username(), this.password())
+    this.authService.login(this.username, this.password)
       .subscribe({
         next: () => {
-          this.loading.set(false);
+          this.loading = false;
           this.router.navigate(['/']);
         },
         error: (err) => {
-          this.loading.set(false);
-          this.error.set('Invalid username or password');
+          this.loading = false;
+          this.error = 'Invalid username or password';
           console.error('Login error:', err);
         }
       });

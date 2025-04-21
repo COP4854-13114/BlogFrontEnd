@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -33,11 +33,11 @@ export class NewBlogComponent {
   private router = inject(Router);
   private snackBar = inject(MatSnackBar);
 
-  // Signals for component state
-  title = signal('');
-  content = signal('');
-  loading = signal(false);
-  error = signal<string | null>(null);
+  // Model properties instead of signals
+  title = '';
+  content = '';
+  loading = false;
+  error: string | null = null;
 
   // Check if user is authenticated
   isAuthenticated = this.authService.isAuthenticated;
@@ -49,43 +49,33 @@ export class NewBlogComponent {
     }
   }
 
-  // Update title signal
-  updateTitle(event: Event): void {
-    this.title.set((event.target as HTMLInputElement).value);
-  }
-
-  // Update content signal
-  updateContent(event: Event): void {
-    this.content.set((event.target as HTMLTextAreaElement).value);
-  }
-
   // Create a new blog
   createBlog(): void {
-    if (!this.title() || !this.content()) {
-      this.error.set('Title and content are required');
+    if (!this.title || !this.content) {
+      this.error = 'Title and content are required';
       return;
     }
 
-    this.loading.set(true);
-    this.error.set(null);
+    this.loading = true;
+    this.error = null;
 
     const blogData = {
-      title: this.title(),
-      content: this.content()
+      title: this.title,
+      content: this.content
     };
 
     // Create new blog
     this.blogService.createBlog(blogData).subscribe({
       next: () => {
-        this.loading.set(false);
+        this.loading = false;
         this.snackBar.open('Blog created successfully', 'Close', {
           duration: 3000
         });
         this.router.navigate(['/']);
       },
       error: (err) => {
-        this.loading.set(false);
-        this.error.set('Error creating blog');
+        this.loading = false;
+        this.error = 'Error creating blog';
         console.error('Error creating blog:', err);
       }
     });

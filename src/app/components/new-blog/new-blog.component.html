@@ -4,11 +4,11 @@
       <mat-card-title>Create New Blog</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      @if (error()) {
-        <div class="error-message">{{ error() }}</div>
+      @if (error) {
+        <div class="error-message">{{ error }}</div>
       }
       
-      @if (loading()) {
+      @if (loading) {
         <div class="loading-spinner">
           <mat-spinner></mat-spinner>
         </div>
@@ -16,12 +16,12 @@
         <form (submit)="createBlog()">
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Title</mat-label>
-            <input matInput [value]="title()" (input)="updateTitle($event)" required>
+            <input matInput [(ngModel)]="title" name="title" required>
           </mat-form-field>
           
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Content</mat-label>
-            <textarea matInput rows="10" [value]="content()" (input)="updateContent($event)" required></textarea>
+            <textarea matInput rows="10" [(ngModel)]="content" name="content" required></textarea>
           </mat-form-field>
           
           <div class="button-container">
