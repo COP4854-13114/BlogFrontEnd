@@ -10,6 +10,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { BlogService } from '../../services/blog.service';
 import { AuthService } from '../../services/auth.service';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-new-blog',
@@ -50,7 +51,7 @@ export class NewBlogComponent {
   }
 
   // Create a new blog
-  createBlog(): void {
+  async createBlog(): Promise<void> {
     if (!this.title || !this.content) {
       this.error = 'Title and content are required';
       return;
@@ -64,21 +65,19 @@ export class NewBlogComponent {
       content: this.content
     };
 
-    // Create new blog
-    this.blogService.createBlog(blogData).subscribe({
-      next: () => {
-        this.loading = false;
-        this.snackBar.open('Blog created successfully', 'Close', {
-          duration: 3000
-        });
-        this.router.navigate(['/']);
-      },
-      error: (err) => {
-        this.loading = false;
-        this.error = 'Error creating blog';
-        console.error('Error creating blog:', err);
-      }
-    });
+    try {
+      // Create new blog
+      await firstValueFrom(this.blogService.createBlog(blogData));
+      this.loading = false;
+      this.snackBar.open('Blog created successfully', 'Close', {
+        duration: 3000
+      });
+      this.router.navigate(['/']);
+    } catch (err) {
+      this.loading = false;
+      this.error = 'Error creating blog';
+      console.error('Error creating blog:', err);
+    }
   }
 
   // Cancel creating and return to home

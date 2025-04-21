@@ -22,19 +22,11 @@ import { AuthService } from '../../services/auth.service';
 export class NavbarComponent {
   private authService = inject(AuthService);
   
-  // Use the auth service's signal
+  // Use the auth service's properties
   isAuthenticated = this.authService.isAuthenticated;
-  username = signal('');
   
-  constructor() {
-    this.updateUsername();
-  }
-  
-  updateUsername(): void {
-    if (this.isAuthenticated()) {
-      this.username.set(this.authService.getCurrentUser()?.username || '');
-    }
-  }
+  // We don't need our own username signal since authService already has one
+  username = this.authService.username;
   
   logout(): void {
     this.authService.logout();

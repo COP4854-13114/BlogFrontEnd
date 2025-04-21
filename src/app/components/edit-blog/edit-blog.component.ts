@@ -11,6 +11,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { BlogService } from '../../services/blog.service';
 import { AuthService } from '../../services/auth.service';
 import { Blog } from '../../models/blog.model';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-edit-blog',
@@ -45,7 +46,7 @@ export class EditBlogComponent implements OnInit {
   // Check if user is authenticated
   isAuthenticated = this.authService.isAuthenticated;
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     // If user is not authenticated, redirect to login
     if (!this.isAuthenticated()) {
       this.router.navigate(['/login']);
@@ -56,7 +57,7 @@ export class EditBlogComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.blogId = Number(id);
-      this.loadBlog(Number(id));
+      await this.loadBlog(Number(id));
     } else {
       // If no ID provided, redirect to home
       this.router.navigate(['/']);
@@ -64,32 +65,31 @@ export class EditBlogComponent implements OnInit {
   }
 
   // Load blog details for editing
-  loadBlog(id: number): void {
+  async loadBlog(id: number): Promise<void> {
     this.loading = true;
-    this.blogService.getBlog(id).subscribe({
-      next: (blog: Blog) => {
-        this.title = blog.title;
-        this.content = blog.content;
-        this.loading = false;
-        
-        // Check if user can edit this blog
-        if (!this.blogService.canEdit(blog)) {
-          this.snackBar.open('You do not have permission to edit this blog', 'Close', {
-            duration: 3000
-          });
-          this.router.navigate(['/']);
-        }
-      },
-      error: (err) => {
-        this.loading = false;
-        this.error = 'Error loading blog';
-        console.error('Error loading blog:', err);
+    
+    try {
+      const blog: Blog = await firstValueFrom(this.blogService.getBlog(id));
+      this.title = blog.title;
+      this.content = blog.content;
+      this.loading = false;
+      
+      // Check if user can edit this blog
+      if (!this.blogService.canEdit(blog)) {
+        this.snackBar.open('You do not have permission to edit this blog', 'Close', {
+          duration: 3000
+        });
+        this.router.navigate(['/']);
       }
-    });
+    } catch (err) {
+      this.loading = false;
+      this.error = 'Error loading blog';
+      console.error('Error loading blog:', err);
+    }
   }
 
   // Update an existing blog
-  updateBlog(): void {
+  async updateBlog(): Promise<void> {
     if (!this.title || !this.content) {
       this.error = 'Title and content are required';
       return;
@@ -103,21 +103,19 @@ export class EditBlogComponent implements OnInit {
       content: this.content
     };
 
-    // Update existing blog
-    this.blogService.updateBlog(this.blogId!, blogData).subscribe({
-      next: () => {
-        this.loading = false;
-        this.snackBar.open('Blog updated successfully', 'Close', {
-          duration: 3000
-        });
-        this.router.navigate(['/']);
-      },
-      error: (err) => {
-        this.loading = false;
-        this.error = 'Error updating blog';
-        console.error('Error updating blog:', err);
-      }
-    });
+    try {
+      // Update existing blog
+      await firstValueFrom(this.blogService.updateBlog(this.blogId!, blogData));
+      this.loading = false;
+      this.snackBar.open('Blog updated successfully', 'Close', {
+        duration: 3000
+      });
+      this.router.navigate(['/']);
+    } catch (err) {
+      this.loading = false;
+      this.error = 'Error updating blog';
+      console.error('Error updating blog:', err);
+    }
   }
 
   // Cancel editing and return to home

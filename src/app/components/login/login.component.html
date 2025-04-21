@@ -12,7 +12,7 @@
         <mat-spinner diameter="40"></mat-spinner>
       </div>
     } @else {
-      <form (submit)="login()">
+      <form (submit)="$event.preventDefault(); login()">
         <mat-form-field class="full-width">
           <mat-label>Username</mat-label>
           <input matInput [(ngModel)]="username" name="username" required>

@@ -9,6 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthService } from '../../services/auth.service';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -47,7 +48,7 @@ export class LoginComponent {
   }
   
   // Perform login
-  login(): void {
+  async login(): Promise<void> {
     if (!this.username || !this.password) {
       this.error = 'Username and password are required';
       return;
@@ -56,17 +57,14 @@ export class LoginComponent {
     this.loading = true;
     this.error = null;
     
-    this.authService.login(this.username, this.password)
-      .subscribe({
-        next: () => {
-          this.loading = false;
-          this.router.navigate(['/']);
-        },
-        error: (err) => {
-          this.loading = false;
-          this.error = 'Invalid username or password';
-          console.error('Login error:', err);
-        }
-      });
+    try {
+      await firstValueFrom(this.authService.login(this.username, this.password));
+      this.loading = false;
+      this.router.navigate(['/']);
+    } catch (err) {
+      this.loading = false;
+      this.error = 'Invalid username or password';
+      console.error('Login error:', err);
+    }
   }
 }
