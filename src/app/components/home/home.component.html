@@ -1,19 +1,19 @@
-<div class="blog-container">
-  <h1>Blog Posts</h1>
-  
-  @if (isAuthenticated()) {
-    <div class="new-blog-button">
-      <a mat-raised-button color="primary" routerLink="/blog/new">
+<div class="container">
+  <div class="header">
+    <h1>Blog Posts</h1>
+    
+    @if (isAuthenticated()) {
+      <button mat-raised-button color="primary" routerLink="/blog/new">
         <mat-icon>add</mat-icon> New Blog
-      </a>
-    </div>
-  }
+      </button>
+    }
+  </div>
 
   @if (blogs().length === 0) {
-    <div class="no-blogs-message">
+    <div class="empty-state">
       <p>There are no blog posts yet.</p>
       @if (isAuthenticated()) {
-        <p>Click the 'New Blog' button to create your first post!</p>
+        <p>Click the 'New Blog' button to create your first post.</p>
       } @else {
         <p>Please log in to create a new blog post.</p>
       }
@@ -21,28 +21,24 @@
   } @else {
     <div class="blog-list">
       @for (blog of blogs(); track blog.id) {
-        <mat-card class="blog-card">
-          <mat-card-header>
-            <mat-card-title>{{ blog.title }}</mat-card-title>
-            <mat-card-subtitle>
-              Posted by {{ blog.created_by }} on {{ formatDate(blog.date) }}
-            </mat-card-subtitle>
-          </mat-card-header>
-          <mat-card-content>
-            <p>{{ blog.content }}</p>
-          </mat-card-content>
-          <mat-divider></mat-divider>
-          <mat-card-actions>
-            @if (canEdit(blog)) {
+        <div class="blog-item">
+          <h2>{{ blog.title }}</h2>
+          <div class="blog-meta">
+            Posted by {{ blog.created_by }} on {{ formatDate(blog.date) }}
+          </div>
+          <p class="blog-content">{{ blog.content }}</p>
+          
+          @if (canEdit(blog)) {
+            <div class="blog-actions">
               <a mat-button color="primary" [routerLink]="['/blog/edit', blog.id]">
                 <mat-icon>edit</mat-icon> Edit
               </a>
               <button mat-button color="warn" (click)="deleteBlog(blog)">
                 <mat-icon>delete</mat-icon> Delete
               </button>
-            }
-          </mat-card-actions>
-        </mat-card>
+            </div>
+          }
+        </div>
       }
     </div>
   }

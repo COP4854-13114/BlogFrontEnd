@@ -1,36 +1,17 @@
-.login-container {
-  max-width: 450px;
-  margin: 40px auto;
-  padding: 0 16px;
+/* Simplified login styles */
+.container {
+  display: flex;
+  justify-content: center;
+  padding: 40px 20px;
 }
 
-mat-card {
-  max-width: 400px;
-  width: 100%;
-}
-
-.login-card {
+.form-card {
+  background: white;
+  border-radius: 8px;
   padding: 24px;
-  border-radius: 10px !important;
-}
-
-.login-header {
-  margin-bottom: 24px;
-  text-align: center;
-}
-
-.login-header mat-icon {
-  font-size: 40px;
-  height: 40px;
-  width: 40px;
-  color: #3f51b5;
-  margin-bottom: 16px;
-}
-
-.login-title {
-  margin: 0;
-  font-size: 1.5rem;
-  color: #3f51b5;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .full-width {
@@ -38,46 +19,16 @@ mat-card {
   margin-bottom: 16px;
 }
 
-.error-message {
-  color: #f44336;
-  margin-bottom: 16px;
-  padding: 12px;
+.error-alert {
   background-color: #ffebee;
+  color: #d32f2f;
+  padding: 12px;
   border-radius: 4px;
+  margin-bottom: 16px;
 }
 
-.button-container {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 24px;
-}
-
-.login-button {
-  width: 100%;
-  padding: 8px;
-  font-size: 1rem;
-}
-
-.loading-spinner {
+.center-content {
   display: flex;
   justify-content: center;
   margin: 24px 0;
-}
-
-.alternate-action {
-  margin-top: 16px;
-  text-align: center;
-  color: #666;
-}
-
-.alternate-action a {
-  color: #3f51b5;
-  text-decoration: none;
-  font-weight: 500;
-  transition: color 0.2s;
-}
-
-.alternate-action a:hover {
-  color: #303f9f;
-  text-decoration: underline;
 }

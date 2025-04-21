@@ -1,35 +1,33 @@
-<div class="blog-form-container">
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title>Create New Blog</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      @if (error) {
-        <div class="error-message">{{ error }}</div>
-      }
-      
-      @if (loading) {
-        <div class="loading-spinner">
-          <mat-spinner></mat-spinner>
+<!-- Simplified new blog form -->
+<div class="container">
+  <div class="form-card">
+    <h2>Create New Blog</h2>
+    
+    @if (error) {
+      <div class="error-alert">{{ error }}</div>
+    }
+    
+    @if (loading) {
+      <div class="center-content">
+        <mat-spinner diameter="40"></mat-spinner>
+      </div>
+    } @else {
+      <form (submit)="createBlog()">
+        <mat-form-field class="full-width">
+          <mat-label>Title</mat-label>
+          <input matInput [(ngModel)]="title" name="title" required>
+        </mat-form-field>
+        
+        <mat-form-field class="full-width">
+          <mat-label>Content</mat-label>
+          <textarea matInput rows="8" [(ngModel)]="content" name="content" required></textarea>
+        </mat-form-field>
+        
+        <div class="actions">
+          <button mat-button type="button" (click)="cancel()">Cancel</button>
+          <button mat-raised-button color="primary" type="submit">Create</button>
         </div>
-      } @else {
-        <form (submit)="createBlog()">
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Title</mat-label>
-            <input matInput [(ngModel)]="title" name="title" required>
-          </mat-form-field>
-          
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Content</mat-label>
-            <textarea matInput rows="10" [(ngModel)]="content" name="content" required></textarea>
-          </mat-form-field>
-          
-          <div class="button-container">
-            <button mat-button type="button" (click)="cancel()">Cancel</button>
-            <button mat-raised-button color="primary" type="submit">Create</button>
-          </div>
-        </form>
-      }
-    </mat-card-content>
-  </mat-card>
+      </form>
+    }
+  </div>
 </div>
