@@ -1,1 +1,98 @@
-/* You can add global styles to this file, and also import other style files */
+/* Global styles for the blog application */
+html, body { height: 100%; }
+body { 
+  margin: 0; 
+  font-family: Roboto, "Helvetica Neue", sans-serif; 
+  background-color: #f8f9fa;
+  color: #333;
+  line-height: 1.6;
+}
+
+.container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Card styles */
+mat-card {
+  margin-bottom: 20px;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+mat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12) !important;
+}
+
+mat-card-title {
+  font-size: 1.4rem !important;
+  font-weight: 500 !important;
+  color: #3f51b5;
+}
+
+mat-card-subtitle {
+  color: #666 !important;
+  font-size: 0.9rem !important;
+}
+
+/* Typography */
+h1 {
+  font-weight: 500;
+  color: #3f51b5;
+  margin-bottom: 20px;
+  font-size: 2rem;
+  position: relative;
+  display: inline-block;
+}
+
+h1::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background-color: #3f51b5;
+  border-radius: 2px;
+}
+
+p {
+  line-height: 1.6;
+  color: #444;
+}
+
+/* Form and input styling */
+mat-form-field {
+  margin-bottom: 16px !important;
+}
+
+textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+/* Button styling */
+button[mat-raised-button] {
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+  transition: all 0.3s;
+}
+
+button[mat-raised-button]:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Animation for page transitions */
+.fade-in {
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

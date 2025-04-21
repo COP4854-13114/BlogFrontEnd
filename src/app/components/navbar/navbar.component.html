@@ -1,0 +1,34 @@
+<mat-toolbar color="primary">
+  <a routerLink="/" class="navbar-brand">
+    <mat-icon>article</mat-icon>
+    BlogApp
+  </a>
+  
+  <a mat-button routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+    <mat-icon>home</mat-icon> Home
+  </a>
+  
+  @if (isAuthenticated()) {
+    <a mat-button routerLink="/blog/new">
+      <mat-icon>add_circle</mat-icon> New Blog
+    </a>
+  }
+  
+  <span class="spacer"></span>
+  
+  @if (isAuthenticated()) {
+    <span class="username">
+      <mat-icon>person</mat-icon>
+      {{ username() }}
+    </span>
+    <button mat-raised-button color="accent" (click)="logout()">
+      <mat-icon>exit_to_app</mat-icon> Logout
+    </button>
+  } @else {
+    <div class="auth-buttons">
+      <a mat-raised-button color="accent" routerLink="/login">
+        <mat-icon>login</mat-icon> Login
+      </a>
+    </div>
+  }
+</mat-toolbar>

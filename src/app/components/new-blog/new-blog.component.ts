@@ -1,0 +1,98 @@
+import { Component, inject, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { BlogService } from '../../services/blog.service';
+import { AuthService } from '../../services/auth.service';
+
+@Component({
+  selector: 'app-new-blog',
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatProgressSpinnerModule,
+    MatSnackBarModule
+  ],
+  templateUrl: './new-blog.component.html',
+  styleUrl: './new-blog.component.css'
+})
+export class NewBlogComponent {
+  private blogService = inject(BlogService);
+  private authService = inject(AuthService);
+  private router = inject(Router);
+  private snackBar = inject(MatSnackBar);
+
+  // Signals for component state
+  title = signal('');
+  content = signal('');
+  loading = signal(false);
+  error = signal<string | null>(null);
+
+  // Check if user is authenticated
+  isAuthenticated = this.authService.isAuthenticated;
+
+  ngOnInit(): void {
+    // If user is not authenticated, redirect to login
+    if (!this.isAuthenticated()) {
+      this.router.navigate(['/login']);
+    }
+  }
+
+  // Update title signal
+  updateTitle(event: Event): void {
+    this.title.set((event.target as HTMLInputElement).value);
+  }
+
+  // Update content signal
+  updateContent(event: Event): void {
+    this.content.set((event.target as HTMLTextAreaElement).value);
+  }
+
+  // Create a new blog
+  createBlog(): void {
+    if (!this.title() || !this.content()) {
+      this.error.set('Title and content are required');
+      return;
+    }
+
+    this.loading.set(true);
+    this.error.set(null);
+
+    const blogData = {
+      title: this.title(),
+      content: this.content()
+    };
+
+    // Create new blog
+    this.blogService.createBlog(blogData).subscribe({
+      next: () => {
+        this.loading.set(false);
+        this.snackBar.open('Blog created successfully', 'Close', {
+          duration: 3000
+        });
+        this.router.navigate(['/']);
+      },
+      error: (err) => {
+        this.loading.set(false);
+        this.error.set('Error creating blog');
+        console.error('Error creating blog:', err);
+      }
+    });
+  }
+
+  // Cancel creating and return to home
+  cancel(): void {
+    this.router.navigate(['/']);
+  }
+}
