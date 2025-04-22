@@ -1,3 +1,22 @@
+/**
+ * New Blog Component
+ * 
+ * This component provides a form for creating new blog posts, including:
+ * - Title and content input fields
+ * - Form validation
+ * - Error handling and display
+ * - Loading indicator
+ * - Create and cancel actions
+ * 
+ * IMPORTANT CONCEPTS:
+ * 1. Authentication Check: Redirects unauthenticated users to login
+ * 
+ * 2. Template-driven Forms: Uses NgModel for two-way data binding
+ * 
+ * 3. Error Handling: Shows user-friendly error messages
+ * 
+ * 4. Loading States: Provides visual feedback during API calls
+ */
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -28,58 +47,87 @@ import { AuthService } from '../../services/auth.service';
   styleUrl: './new-blog.component.css'
 })
 export class NewBlogComponent {
+  /**
+   * Inject required services using Angular's inject() function
+   */
   private blogService = inject(BlogService);
   private authService = inject(AuthService);
   private router = inject(Router);
   private snackBar = inject(MatSnackBar);
 
-  // Model properties instead of signals
+  /**
+   * Form model properties for two-way binding with the template
+   * Using simple properties instead of signals for form state
+   */
   title = '';
   content = '';
   loading = false;
   error: string | null = null;
 
-  // Check if user is authenticated
+  /**
+   * Reference to AuthService's isAuthenticated computed signal
+   * Used to check authentication status
+   */
   isAuthenticated = this.authService.isAuthenticated;
 
+  /**
+   * Lifecycle hook that redirects unauthenticated users
+   * Acts as a simple route guard to protect this component
+   */
   ngOnInit(): void {
-    // If user is not authenticated, redirect to login
+    // If user is not authenticated, redirect to login page
     if (!this.isAuthenticated()) {
       this.router.navigate(['/login']);
     }
   }
 
-  // Create a new blog
+  /**
+   * Creates a new blog post with the provided title and content
+   * Validates inputs, handles API interactions, and manages UI state
+   */
   async createBlog(): Promise<void> {
+    // Basic form validation
     if (!this.title || !this.content) {
       this.error = 'Title and content are required';
       return;
     }
 
+    // Update UI to show loading state
     this.loading = true;
     this.error = null;
 
+    // Prepare data for API call
     const blogData = {
       title: this.title,
       content: this.content
     };
 
     try {
-      // Create new blog using async/await
+      // Create new blog using BlogService
       await this.blogService.createBlog(blogData);
+      
+      // Update UI after successful creation
       this.loading = false;
+      
+      // Show success notification
       this.snackBar.open('Blog created successfully', 'Close', {
         duration: 3000
       });
+      
+      // Navigate back to home page to see the new blog
       this.router.navigate(['/']);
     } catch (err) {
+      // Handle error case
       this.loading = false;
       this.error = 'Error creating blog';
       console.error('Error creating blog:', err);
     }
   }
 
-  // Cancel creating and return to home
+  /**
+   * Cancels blog creation and returns to home page
+   * No confirmation is requested as no persistent changes have been made
+   */
   cancel(): void {
     this.router.navigate(['/']);
   }
