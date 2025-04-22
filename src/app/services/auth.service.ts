@@ -1,6 +1,6 @@
 import { Injectable, computed, signal } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, tap, throwError } from 'rxjs';
+import { Observable, lastValueFrom } from 'rxjs';
 import { Router } from '@angular/router';
 import { AuthResponse } from '../models/auth.model';
 
@@ -41,7 +41,8 @@ export class AuthService {
   }
 
   // Login user with username and password using Basic Auth
-  login(username: string, password: string): Observable<AuthResponse> {
+  // Returns a Promise for easier async/await usage
+  async login(username: string, password: string): Promise<AuthResponse> {
     // Create Basic Auth header
     const credentials = `${username}:${password}`;
     const base64Credentials = btoa(credentials);
@@ -50,19 +51,26 @@ export class AuthService {
       'Content-Type': 'application/json'
     });
     
-    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, {}, { headers })
-      .pipe(
-        tap(response => {
-          // Store token and username in localStorage and update signal
-          localStorage.setItem('token', response.token);
-          localStorage.setItem('username', username);
-          
-          this.authState.set({
-            token: response.token,
-            username: username
-          });
-        })
+    try {
+      // Use lastValueFrom to convert Observable to Promise
+      const response = await lastValueFrom(
+        this.http.post<AuthResponse>(`${this.apiUrl}/login`, {}, { headers })
       );
+      
+      // Store token and username in localStorage and update signal
+      localStorage.setItem('token', response.token);
+      localStorage.setItem('username', username);
+      
+      this.authState.set({
+        token: response.token,
+        username: username
+      });
+      
+      return response;
+    } catch (error) {
+      console.error('Login failed:', error);
+      throw error;
+    }
   }
 
   // Logout user

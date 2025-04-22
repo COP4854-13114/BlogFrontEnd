@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, lastValueFrom } from 'rxjs';
 import { Blog } from '../models/blog.model';
 import { AuthService } from './auth.service';
 
@@ -14,40 +14,71 @@ export class BlogService {
   // Base URL for the API
   private apiUrl = 'http://localhost:3000';
 
-  // Get all blogs
-  getBlogs(): Observable<Blog[]> {
-    return this.http.get<Blog[]>(`${this.apiUrl}/blogs`);
+  // Get all blogs - Returns Promise for easier async/await usage
+  async getBlogs(): Promise<Blog[]> {
+    try {
+      return await lastValueFrom(this.http.get<Blog[]>(`${this.apiUrl}/blogs`));
+    } catch (error) {
+      console.error('Error fetching blogs:', error);
+      throw error;
+    }
   }
 
-  // Get a single blog by ID
-  getBlog(id: number): Observable<Blog> {
-    return this.http.get<Blog>(`${this.apiUrl}/blogs/${id}`);
+  // Get a single blog by ID - Returns Promise for easier async/await usage
+  async getBlog(id: number): Promise<Blog> {
+    try {
+      return await lastValueFrom(this.http.get<Blog>(`${this.apiUrl}/blogs/${id}`));
+    } catch (error) {
+      console.error(`Error fetching blog with ID ${id}:`, error);
+      throw error;
+    }
   }
 
-  // Create a new blog
-  createBlog(blogData: { title: string, content: string }): Observable<Blog> {
-    return this.http.post<Blog>(
-      `${this.apiUrl}/blogs`, 
-      blogData, 
-      this.authService.getAuthOptions()
-    );
+  // Create a new blog - Returns Promise for easier async/await usage
+  async createBlog(blogData: { title: string, content: string }): Promise<Blog> {
+    try {
+      return await lastValueFrom(
+        this.http.post<Blog>(
+          `${this.apiUrl}/blogs`, 
+          blogData, 
+          this.authService.getAuthOptions()
+        )
+      );
+    } catch (error) {
+      console.error('Error creating blog:', error);
+      throw error;
+    }
   }
 
-  // Update an existing blog
-  updateBlog(id: number, blogData: { title: string, content: string }): Observable<Blog> {
-    return this.http.put<Blog>(
-      `${this.apiUrl}/blogs/${id}`, 
-      blogData, 
-      this.authService.getAuthOptions()
-    );
+  // Update an existing blog - Returns Promise for easier async/await usage
+  async updateBlog(id: number, blogData: { title: string, content: string }): Promise<Blog> {
+    try {
+      return await lastValueFrom(
+        this.http.put<Blog>(
+          `${this.apiUrl}/blogs/${id}`, 
+          blogData, 
+          this.authService.getAuthOptions()
+        )
+      );
+    } catch (error) {
+      console.error(`Error updating blog with ID ${id}:`, error);
+      throw error;
+    }
   }
 
-  // Delete a blog
-  deleteBlog(id: number): Observable<void> {
-    return this.http.delete<void>(
-      `${this.apiUrl}/blogs/${id}`, 
-      this.authService.getAuthOptions()
-    );
+  // Delete a blog - Returns Promise for easier async/await usage
+  async deleteBlog(id: number): Promise<void> {
+    try {
+      await lastValueFrom(
+        this.http.delete<void>(
+          `${this.apiUrl}/blogs/${id}`, 
+          this.authService.getAuthOptions()
+        )
+      );
+    } catch (error) {
+      console.error(`Error deleting blog with ID ${id}:`, error);
+      throw error;
+    }
   }
 
   // Check if the current user can edit a blog

@@ -9,7 +9,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthService } from '../../services/auth.service';
-import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -58,7 +57,8 @@ export class LoginComponent {
     this.error = null;
     
     try {
-      await firstValueFrom(this.authService.login(this.username, this.password));
+      // Now using async/await directly with the updated AuthService
+      await this.authService.login(this.username, this.password);
       this.loading = false;
       this.router.navigate(['/']);
     } catch (err) {

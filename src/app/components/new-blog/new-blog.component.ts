@@ -10,7 +10,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { BlogService } from '../../services/blog.service';
 import { AuthService } from '../../services/auth.service';
-import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-new-blog',
@@ -66,8 +65,8 @@ export class NewBlogComponent {
     };
 
     try {
-      // Create new blog
-      await firstValueFrom(this.blogService.createBlog(blogData));
+      // Create new blog using async/await
+      await this.blogService.createBlog(blogData);
       this.loading = false;
       this.snackBar.open('Blog created successfully', 'Close', {
         duration: 3000

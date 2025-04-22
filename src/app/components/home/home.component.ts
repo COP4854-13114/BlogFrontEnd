@@ -9,7 +9,6 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { BlogService } from '../../services/blog.service';
 import { AuthService } from '../../services/auth.service';
 import { Blog } from '../../models/blog.model';
-import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -41,7 +40,8 @@ export class HomeComponent implements OnInit {
 
   async loadBlogs(): Promise<void> {
     try {
-      const data = await firstValueFrom(this.blogService.getBlogs());
+      // Using async/await with updated BlogService
+      const data = await this.blogService.getBlogs();
       this.blogs.set(data);
     } catch (err) {
       console.error('Error loading blogs:', err);
@@ -54,7 +54,8 @@ export class HomeComponent implements OnInit {
   async deleteBlog(blog: Blog): Promise<void> {
     if (confirm(`Are you sure you want to delete "${blog.title}"?`)) {
       try {
-        await firstValueFrom(this.blogService.deleteBlog(blog.id));
+        // Using async/await with updated BlogService
+        await this.blogService.deleteBlog(blog.id);
         
         // Update the blogs list after deletion
         await this.loadBlogs();

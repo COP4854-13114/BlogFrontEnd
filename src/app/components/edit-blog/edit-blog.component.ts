@@ -11,7 +11,6 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { BlogService } from '../../services/blog.service';
 import { AuthService } from '../../services/auth.service';
 import { Blog } from '../../models/blog.model';
-import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-edit-blog',
@@ -69,7 +68,8 @@ export class EditBlogComponent implements OnInit {
     this.loading = true;
     
     try {
-      const blog: Blog = await firstValueFrom(this.blogService.getBlog(id));
+      // Use async/await with updated BlogService
+      const blog: Blog = await this.blogService.getBlog(id);
       this.title = blog.title;
       this.content = blog.content;
       this.loading = false;
@@ -104,8 +104,8 @@ export class EditBlogComponent implements OnInit {
     };
 
     try {
-      // Update existing blog
-      await firstValueFrom(this.blogService.updateBlog(this.blogId!, blogData));
+      // Update existing blog using async/await
+      await this.blogService.updateBlog(this.blogId!, blogData);
       this.loading = false;
       this.snackBar.open('Blog updated successfully', 'Close', {
         duration: 3000
